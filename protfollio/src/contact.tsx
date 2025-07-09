@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { client } from '../public/lib/sanity';
+import emailjs from 'emailjs-com';
 
 interface ContactData {
   email: string;
@@ -23,6 +24,7 @@ export default function Contact() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [contactData, setContactData] = useState<ContactData | null>(null);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   useEffect(() => {
     // Fetch contact data from your API
@@ -54,12 +56,44 @@ export default function Contact() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setFormData({ name: '', email: '', subject: '', message: '' });
-      alert('Message sent successfully!');
-    }, 2000);
+    setSubmitStatus('idle');
+
+    // EmailJS configuration
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      subject: formData.subject,
+      message: formData.message,
+      to_name: 'Ranees', // Your name
+    };
+
+    // Replace these with your actual EmailJS credentials
+    const serviceId = 'service_770dxl5'; // Get from EmailJS dashboard
+    const templateId = 'template_jhw49w5'; // Get from EmailJS dashboard
+    const userId = 'Y-0wMi52NGLVvfvbA'; // Get from EmailJS dashboard
+
+    emailjs.send(serviceId, templateId, templateParams, userId)
+      .then((response) => {
+        console.log('SUCCESS!', response.status, response.text);
+        setIsSubmitting(false);
+        setSubmitStatus('success');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        
+        // Show success message
+        setTimeout(() => {
+          setSubmitStatus('idle');
+        }, 5000);
+      })
+      .catch((error) => {
+        console.log('FAILED...', error);
+        setIsSubmitting(false);
+        setSubmitStatus('error');
+        
+        // Show error message
+        setTimeout(() => {
+          setSubmitStatus('idle');
+        }, 5000);
+      });
   };
 
   if (!contactData) {
@@ -268,6 +302,29 @@ export default function Contact() {
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </button>
+
+                {/* Status Messages */}
+                {submitStatus === 'success' && (
+                  <div className="mt-4 p-4 bg-green-500/20 border border-green-500/50 rounded-xl text-green-400 text-center animate-fade-in-up">
+                    <div className="flex items-center justify-center space-x-2">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span>Message sent successfully!</span>
+                    </div>
+                  </div>
+                )}
+
+                {submitStatus === 'error' && (
+                  <div className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-400 text-center animate-fade-in-up">
+                    <div className="flex items-center justify-center space-x-2">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                      <span>Failed to send message. Please try again.</span>
+                    </div>
+                  </div>
+                )}
               </form>
             </div>
           </div>

@@ -7,8 +7,8 @@ export default defineConfig({
   name: 'default',
   title: 'protfolio',
 
-  projectId: 'rksihl2j',
-  dataset: 'production',
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'rksihl2j',
+  dataset: process.env.SANITY_STUDIO_DATASET || 'production',
 
   plugins: [structureTool(), visionTool()],
 

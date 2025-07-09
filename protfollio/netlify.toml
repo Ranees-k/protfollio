@@ -1,0 +1,14 @@
+[build]
+  [build]
+  base = "frontend"
+  publish = "frontend/dist"
+  command = "npm run build"
+
+[build.environment]
+  VITE_SANITY_PROJECT_ID = "rksihl2j"
+  VITE_SANITY_DATASET = "production"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

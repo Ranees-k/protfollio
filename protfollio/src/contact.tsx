@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import emailjs from 'emailjs-com';
 import { client } from '../public/lib/sanity';
 
 interface ContactData {

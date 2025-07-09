@@ -1,5 +1,5 @@
 // src/sections/About.tsx
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { client } from '../public/lib/sanity' 
 
 interface AboutData {

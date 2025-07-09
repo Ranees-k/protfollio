@@ -12,10 +12,10 @@ export default function Landing() {
     "fileUrl": file.asset->url
   }`
 
-  const query2 = `*[_type == "technologies"]{
-      name
+  const query2 = `*[_type == "technology"]{
+    name
   }`;
-
+  
   client
   .fetch(query2)
   .then((data) => setTechnologies(data))
@@ -78,7 +78,20 @@ export default function Landing() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center animate-fade-in-up animation-delay-800">
-            <button className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/25">
+            <button 
+              onClick={() => {
+                const element = document.getElementById('projects');
+                if (element) {
+                  const headerHeight = 80;
+                  const elementPosition = element.offsetTop - headerHeight;
+                  window.scrollTo({
+                    top: elementPosition,
+                    behavior: 'smooth'
+                  });
+                }
+              }}
+              className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/25 cursor-pointer"
+            >
               <span className="relative z-10">View My Work</span>
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </button>
@@ -94,11 +107,11 @@ export default function Landing() {
             <div className="flex justify-center gap-6 flex-wrap">
               {technologies?.map((tech:any, index:any) => (
                 <span 
-                  key={tech}
+                  key={tech?.name || index}
                   className="px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-gray-300 text-sm font-medium hover:text-cyan-400 hover:border-cyan-400 transition-all duration-300 animate-fade-in-up"
                   style={{ animationDelay: `${1200 + index * 100}ms` }}
                 >
-                  {tech}
+                  {tech?.name}
                 </span>
               ))}
             </div>

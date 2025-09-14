@@ -151,7 +151,7 @@ console.log(projects,"projects")
         </div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
           {projects.map((project, index) => (
             <div 
               key={project._id}
@@ -214,11 +214,12 @@ console.log(projects,"projects")
                   {project.title}
                 </h3>
 
+                <div className="flex flex-col">
                 {/* Project Description */}
-                <p className="text-gray-300 text-sm leading-relaxed mb-4 font-crimson">
+                <p className="text-gray-300 text-sm leading-relaxed mb-4 max-h-40 overflow-y-auto   font-crimson">
                   {project.description}
                 </p>
-
+                </div>
                 {/* Technologies */}
                 <div className="flex flex-wrap gap-2">
                   {Array.isArray(project.technologies) && project.technologies.map((tech: any, techIndex) => (

@@ -274,7 +274,7 @@ export default function Contact() {
         <footer className="mt-20 border-t border-line pt-8 sm:mt-28">
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <p className="font-display text-lg text-ink">
-              Ranees<span className="text-accent">.</span>
+              Ranees<span className="text-accent">.</span>K
             </p>
             <p className="font-sans text-xs font-light text-muted">
               © {new Date().getFullYear()} All rights reserved.

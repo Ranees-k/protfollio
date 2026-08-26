@@ -43,12 +43,23 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
   return (
     <article
-      className={`group grid grid-cols-1 items-center gap-8 border-t border-line py-12 first:border-t-0 first:pt-0 sm:py-16 lg:grid-cols-12 lg:gap-14 lg:py-20 ${
-        reversed ? 'lg:[&>*:first-child]:order-2' : ''
-      }`}
+      className={`group grid grid-cols-1 items-center gap-x-8 gap-y-6 border-t border-line py-12 first:border-t-0 first:pt-0 sm:gap-y-8 sm:py-16 lg:grid-cols-12 lg:gap-x-14 lg:py-20`}
     >
+      {/* Number row — always at top */}
+      <div className="order-1 flex items-baseline gap-3 lg:col-span-12">
+        <span className="font-display text-2xl text-muted/40 sm:text-3xl">{number}</span>
+        <span className="h-px flex-1 bg-line" />
+        <span className="hidden font-sans text-[0.65rem] font-medium uppercase tracking-elegant text-muted sm:inline">
+          {project.category?.title || 'Project'}
+        </span>
+      </div>
+
       {/* Framed gallery image */}
-      <div className="relative lg:col-span-7">
+      <div
+        className={`relative order-2 lg:col-span-7 ${
+          reversed ? 'lg:order-3' : ''
+        }`}
+      >
         <div
           className={`pointer-events-none absolute -inset-x-4 -inset-y-6 -z-10 sm:-inset-x-6 sm:-inset-y-8 ${
             reversed
@@ -100,13 +111,12 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       </div>
 
       {/* Copy */}
-      <div className="flex flex-col lg:col-span-5">
-        <div className="flex items-baseline gap-3 lg:hidden">
-          <span className="font-display text-2xl text-muted/40">{number}</span>
-          <span className="h-px flex-1 bg-line" />
-        </div>
-
-        <h3 className="mt-3 font-display text-[1.85rem] font-medium leading-[1.15] text-ink sm:mt-0 sm:text-4xl lg:text-[2.5rem]">
+      <div
+        className={`flex flex-col order-3 lg:col-span-5 ${
+          reversed ? 'lg:order-2' : ''
+        }`}
+      >
+        <h3 className="font-display text-[1.85rem] font-medium leading-[1.15] text-ink sm:text-4xl lg:text-[2.5rem]">
           {project.title}
         </h3>
 
@@ -144,6 +154,20 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
               rel="noopener noreferrer"
               className="group/link inline-flex items-center gap-2 font-sans text-[0.7rem] font-medium uppercase tracking-elegant text-ink transition-colors hover:text-accent"
             >
+              <svg
+                className="h-3.5 w-3.5 shrink-0"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                aria-hidden
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5M10.5 13.5L21 3m0 0h-5.25M21 3v5.25"
+                />
+              </svg>
               View Live
               <span className="h-px w-5 bg-current transition-all duration-300 group-hover/link:w-9" />
             </a>
@@ -155,6 +179,14 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
               rel="noopener noreferrer"
               className="group/link inline-flex items-center gap-2 font-sans text-[0.7rem] font-medium uppercase tracking-elegant text-muted transition-colors hover:text-accent"
             >
+              <svg
+                className="h-3.5 w-3.5 shrink-0"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden
+              >
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.23c-3.34.73-4.03-1.42-4.03-1.42-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.62-5.49 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+              </svg>
               Source
               <span className="h-px w-5 bg-current transition-all duration-300 group-hover/link:w-9" />
             </a>

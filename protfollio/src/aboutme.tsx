@@ -59,7 +59,7 @@ export default function About() {
           {about.summary}
         </p>
 
-        <div className="mt-16 grid grid-cols-1 gap-10 border-t border-line pt-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+        <div className="mt-16 grid grid-cols-2 gap-8 border-t border-line pt-12 sm:gap-10 lg:grid-cols-4 lg:gap-8">
           {groups.map((group) => (
             <div key={group.name}>
               <h3 className="font-sans text-[0.7rem] font-medium uppercase tracking-elegant text-ink">

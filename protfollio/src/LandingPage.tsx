@@ -1,136 +1,160 @@
-import { useEffect, useState } from "react";
-import { client } from "../public/lib/sanity";
+import { useEffect, useState } from 'react';
+import { client } from '../public/lib/sanity';
 
-export default function Landing() {
+function formatIstTime(date: Date) {
+  const time = new Intl.DateTimeFormat('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }).format(date);
 
-  const [resume, setResume] = useState<any>(null);
-  const [technologies, setTechnologies] = useState<any>(null);
-  
+  return `${time} IST (GMT+5:30)`;
+}
+
+function StatusBar() {
+  const [istTime, setIstTime] = useState(() => formatIstTime(new Date()));
+
   useEffect(() => {
-  const query = `*[_type == "resume"][0]{
-    title,
-    "fileUrl": file.asset->url
-  }`
+    const tick = () => setIstTime(formatIstTime(new Date()));
+    tick();
 
-  const query2 = `*[_type == "technology"]{
-    name
-  }`;
-  
-  client
-  .fetch(query2)
-  .then((data) => setTechnologies(data))
-  .catch(console.error)
+    const now = new Date();
+    const msUntilNextMinute =
+      (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
 
-  client
-  .fetch(query)
-  .then((data) => setResume(data))
-  .catch(console.error)
+    let intervalId: number | undefined;
+    const timeoutId = window.setTimeout(() => {
+      tick();
+      intervalId = window.setInterval(tick, 60_000);
+    }, msUntilNextMinute);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      if (intervalId !== undefined) window.clearInterval(intervalId);
+    };
   }, []);
 
-  console.log(technologies,"technologies" )
   return (
-    <div id="home" className="h-[100vh] w-full bg-black relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-red-600/10 to-orange-600/10 rounded-full blur-3xl animate-bounce"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-cyan-500/5 via-blue-500/5 to-purple-500/5 rounded-full blur-3xl animate-spin-slow"></div>
-      </div>
-
-      {/* Grid pattern overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
-
-      {/* Main content */}
-      <div className="relative z-10 h-full flex items-center justify-center">
-        <div className="text-center max-w-6xl mx-auto px-6">
-          {/* Animated greeting */}
-          <div className="mb-8 animate-fade-in-up">
-            <span className="text-lg md:text-xl text-cyan-400 font-mono tracking-wider uppercase">
-              Welcome to my digital universe
-            </span>
-          </div>
-
-          {/* Main title with animation */}
-          <div className="mb-6 animate-fade-in-up animation-delay-200">
-            <h2 className="text-xl md:text-6xl font-black text-white mb-4 leading-none">
-              <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent animate-gradient-x font-orbitron tracking-wider">
-                RANEES
-              </span>
-            </h2>
-          </div>
-
-          {/* Subtitle with typewriter effect */}
-          <div className="mb-8 animate-fade-in-up animation-delay-400">
-            <h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 mb-4 font-inter tracking-wide">
-              SOFTWARE DEVELOPER
-            </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-cyan-400 to-purple-600 mx-auto rounded-full animate-pulse"></div>
-          </div>
-
-          {/* Description with enhanced styling */}
-          <div className="mb-12 animate-fade-in-up animation-delay-600">
-            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed font-light">
-              Crafting <span className="text-cyan-400 font-semibold">digital experiences</span> with 
-              <span className="text-purple-400 font-semibold"> passion</span> and 
-              <span className="text-blue-400 font-semibold"> precision</span>
-            </p>
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center animate-fade-in-up animation-delay-800">
-            <button 
-              onClick={() => {
-                const element = document.getElementById('projects');
-                if (element) {
-                  const headerHeight = 80;
-                  const elementPosition = element.offsetTop - headerHeight;
-                  window.scrollTo({
-                    top: elementPosition,
-                    behavior: 'smooth'
-                  });
-                }
-              }}
-              className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/25 cursor-pointer"
-            >
-              <span className="relative z-10">View My Work</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </button>
-            
-            <a href={resume?.fileUrl} className="group px-8 py-4 border-2 border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-cyan-400/25">
-              Download Resume
-            </a>
-          </div>
-
-          {/* Tech stack indicators */}
-          <div className="mt-16 animate-fade-in-up animation-delay-1000">
-            <p className="text-gray-500 text-sm uppercase tracking-wider mb-4">Technologies I work with</p>
-            <div className="flex justify-center gap-6 flex-wrap">
-              {technologies?.map((tech:any, index:any) => (
-                <span 
-                  key={tech?.name || index}
-                  className="px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-gray-300 text-sm font-medium hover:text-cyan-400 hover:border-cyan-400 transition-all duration-300 animate-fade-in-up"
-                  style={{ animationDelay: `${1200 + index * 100}ms` }}
-                >
-                  {tech?.name}
-                </span>
-              ))}
-            </div>
-          </div>
+    <div
+      className="flex w-full flex-col gap-2 border-t border-line bg-canvas/80 px-4 py-3.5 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-5 lg:px-8"
+      role="status"
+      aria-live="polite"
+    >
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+        <div className="flex items-center gap-2.5">
+          <span className="relative flex h-2 w-2 shrink-0" aria-hidden>
+            <span className="absolute inset-0 animate-status-ring rounded-full bg-[#3F7A4C]" />
+            <span className="relative h-2 w-2 animate-status-pulse rounded-full bg-[#3F7A4C]" />
+          </span>
+          <span className="font-sans text-[0.65rem] font-medium tracking-wide text-ink sm:text-[0.7rem]">
+            Available for freelance
+          </span>
         </div>
-      </div>
 
-      {/* Floating elements */}
-      <div className="absolute top-20 right-20 w-4 h-4 bg-cyan-400 rounded-full animate-bounce"></div>
-      <div className="absolute bottom-32 left-20 w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
-      <div className="absolute top-1/3 left-10 w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-gray-400 rounded-full mt-2 animate-pulse"></div>
-        </div>
+        <time
+          dateTime={new Date().toISOString()}
+          className="pl-4 font-sans text-[0.65rem] font-light tabular-nums tracking-wide text-muted sm:pl-0 sm:text-[0.7rem]"
+        >
+          {istTime}
+        </time>
       </div>
     </div>
   );
 }
 
+export default function Landing() {
+  const [resume, setResume] = useState<{ title?: string; fileUrl?: string } | null>(null);
+
+  useEffect(() => {
+    const query = `*[_type == "resume"][0]{
+      title,
+      "fileUrl": file.asset->url
+    }`;
+
+    client
+      .fetch(query)
+      .then((data) => setResume(data))
+      .catch(console.error);
+  }, []);
+
+  const scrollToProjects = () => {
+    const element = document.getElementById('projects');
+    if (element) {
+      const headerHeight = 80;
+      window.scrollTo({
+        top: element.offsetTop - headerHeight,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  return (
+    <section
+      id="home"
+      className="relative flex w-full flex-col overflow-hidden sm:min-h-[100svh]"
+    >
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <div className="absolute -left-24 top-0 h-[70%] w-[55%] bg-[radial-gradient(ellipse_at_center,rgba(47,74,63,0.09),transparent_70%)]" />
+        <div className="absolute bottom-0 right-0 h-[55%] w-[50%] bg-[radial-gradient(ellipse_at_center,rgba(28,27,26,0.05),transparent_70%)]" />
+      </div>
+
+      {/* Mobile: compact stack. Desktop: fills viewport & centers */}
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col justify-start px-4 pb-6 pt-20 sm:flex-1 sm:justify-center sm:px-6 sm:pb-12 sm:pt-28 lg:px-8 lg:pt-32">
+        <div className="grid w-full grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:items-end lg:gap-8">
+          <div className="lg:col-span-8">
+            <p className="animate-fade-up font-sans text-[0.7rem] font-medium uppercase tracking-elegant text-accent">
+              Engineering
+            </p>
+
+            <h1 className="animate-fade-up delay-200 mt-3 max-w-3xl font-display text-[clamp(2.15rem,6.2vw,4.15rem)] font-medium leading-[1.08] tracking-tight text-ink sm:mt-4">
+              Full-Stack &amp; AI Systems Developer
+            </h1>
+
+            <div
+              className="mt-4 h-px w-16 origin-left animate-line-grow bg-accent sm:mt-5 sm:w-20"
+              style={{ animationDelay: '350ms' }}
+            />
+
+            <p className="animate-fade-up delay-400 mt-5 max-w-md font-sans text-[0.95rem] font-light leading-relaxed text-muted sm:mt-6 sm:text-lg">
+              Building web applications &amp; intelligent interfaces with clarity,
+              care, and lasting craft.
+            </p>
+
+            <div className="animate-fade-up delay-600 mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center sm:gap-4">
+              <button
+                type="button"
+                onClick={scrollToProjects}
+                className="inline-flex h-12 items-center justify-center bg-accent px-8 font-sans text-[0.7rem] font-medium uppercase tracking-elegant text-surface transition-colors duration-300 hover:bg-accent-soft"
+              >
+                View My Work
+              </button>
+
+              {resume?.fileUrl && (
+                <a
+                  href={resume.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-12 items-center justify-center border border-ink/20 px-8 font-sans text-[0.7rem] font-medium uppercase tracking-elegant text-ink transition-colors duration-300 hover:border-accent hover:text-accent"
+                >
+                  Download Resume
+                </a>
+              )}
+            </div>
+          </div>
+
+          <div className="animate-fade-up delay-600 hidden lg:col-span-4 lg:flex lg:flex-col lg:items-end lg:justify-end lg:pb-2">
+            <p className="max-w-[13rem] text-right font-display text-lg font-normal italic leading-snug text-muted/80">
+              Quiet precision across product, systems, and interface.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile: sits under content. Desktop: pinned to viewport bottom */}
+      <div className="relative z-10 mt-4 animate-fade-up delay-800 sm:mt-auto">
+        <StatusBar />
+      </div>
+    </section>
+  );
+}
